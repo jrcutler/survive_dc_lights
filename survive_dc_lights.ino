@@ -162,7 +162,7 @@ void fill_down_repeat(LPD8806 &lpd)
   }
 }
 
-void dither_repeat(LPD8806 &lpd)
+void fade_repeat(LPD8806 &lpd)
 {
   // switch colors at roughly 1 Hz
   unsigned ms = 1000/lights.numPixels()/4;
@@ -210,9 +210,9 @@ typedef struct
 
 const pattern_t pattern[] =
 {
+  { fill_init, fade_repeat },
   { fill_init, fill_up_repeat },
   { fill_init, fill_down_repeat },
-  { fill_init, dither_repeat },
   { palette_init, cycle_up_repeat },
   { palette_init, cycle_down_repeat },
 };
