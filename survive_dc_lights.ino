@@ -37,7 +37,7 @@ LPD8806 lights(nLEDs, dataPin, clockPin);
 
 void fill(LPD8806 &lpd, uint32_t color, uint16_t ms)
 {
-  for (int i = 0; i < lpd.numPixels(); ++i)
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
     lpd.setPixelColor(i, color);
     lpd.show();
@@ -51,7 +51,7 @@ void fill(LPD8806 &lpd, uint32_t color, uint16_t ms)
 
 void fill_1Hz_init(LPD8806 &lpd)
 {
-  for (unsigned i = 0; i < lpd.numPixels(); ++i)
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
     lpd.setPixelColor(i, palette[palette_count-1]);
   }
