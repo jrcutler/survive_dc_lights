@@ -1,3 +1,6 @@
+#ifndef COLORS_H
+#define COLORS_H
+
 /* Standard color definitions */
 enum {
   // HTML 4 colors
@@ -22,4 +25,6 @@ enum {
   // other colors
   safety_orange = 0xe87600
 };
+
+#endif
 
