@@ -49,7 +49,7 @@ void fill(LPD8806 &lpd, uint32_t color, uint16_t ms)
  * Pattern Functions
  */
 
-void fill_1Hz_init(LPD8806 &lpd)
+void fill_init(LPD8806 &lpd)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
@@ -57,10 +57,10 @@ void fill_1Hz_init(LPD8806 &lpd)
   }
 }
 
-void fill_1Hz_repeat(LPD8806 &lpd)
+void fill_repeat(LPD8806 &lpd)
 {
-  // alternate colors at roughly 1 Hz
-  unsigned ms = 1000/lights.numPixels()/palette_count;
+  // cycle through colors at roughly 2 Hz
+  unsigned ms = 500/lights.numPixels();
   for (size_t i = 0; i < palette_count; ++i)
   {
     fill(lpd, palette[i], ms);
@@ -79,7 +79,7 @@ typedef struct
 
 const pattern_t pattern[] =
 {
-  { fill_1Hz_init, fill_1Hz_repeat },
+  { fill_init, fill_repeat },
 };
 const size_t pattern_count = sizeof(pattern)/sizeof(pattern[0]);
 size_t pattern_index = 0;
