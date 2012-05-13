@@ -201,15 +201,19 @@ size_t pattern_index = 0;
 
 void setup()
 {
+#ifndef DEBUG
   // read pattern_index from EEPROM
   pattern_index = EEPROM.read(0);
+#endif
   if (pattern_index >= pattern_count)
   {
     pattern_index = 0;
   }
+#ifndef DEBUG
   // write next pattern_index to EEPROM (after short delay)
   delay(250);
   EEPROM.write(0, pattern_index + 1);
+#endif
 
   // initialize lights
   lights.begin();
