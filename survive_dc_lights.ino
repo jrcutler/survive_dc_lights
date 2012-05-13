@@ -75,6 +75,14 @@ uint32_t RGB_ColorWheel(uint16_t pos)
   return Color(r, g, b);
 }
 
+void fill_nowait(LPD8806 &lpd, uint32_t color)
+{
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
+  {
+    lpd.setPixelColor(i, color);
+  }
+}
+
 void fill_up(LPD8806 &lpd, uint32_t color, uint16_t wait)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
@@ -192,9 +200,18 @@ void rainbow_repeat(LPD8806 &lpd)
 
 void fill_init(LPD8806 &lpd)
 {
-  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
+  fill_nowait(lpd, palette[palette_count-1]);
+}
+
+void blink_repeat(LPD8806 &lpd)
+{
+  // cycle through colors at roughly 1 Hz
+  unsigned ms = 1000;
+  for (size_t i = 0; i < palette_count; ++i)
   {
-    lpd.setPixelColor(i, palette[palette_count-1]);
+    fill_nowait(lpd, palette[i]);
+    lpd.show();
+    delay(ms);
   }
 }
 
@@ -267,6 +284,7 @@ typedef struct
 const pattern_t pattern[] =
 {
   { null_init, rainbow_repeat },
+  { fill_init, blink_repeat },
   { fill_init, fade_repeat },
   { fill_init, fill_up_repeat },
   { fill_init, fill_down_repeat },
