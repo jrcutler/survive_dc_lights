@@ -37,6 +37,44 @@ LPD8806 lights(nLEDs, dataPin, clockPin);
  * Utility Functions
  */
 
+// Create a 24-bit CIE lightness-adjusted color value from 8-bit R, G, B
+uint32_t Color(byte r, byte g, byte b)
+{
+  uint32_t c;
+  c = CIE_L(r);
+  c <<= 8;
+  c |= CIE_L(g);
+  c <<= 8;
+  c |= CIE_L(b);
+  return c;
+}
+
+// 24-bit RGB color wheel mapped to [0, 767]
+uint32_t RGB_ColorWheel(uint16_t pos)
+{
+  uint8_t r, g, b;
+  uint32_t c;
+  switch (pos >> 8)
+  {
+    case 0:
+      r = 255 - pos; // red down
+      g = pos;       // green up
+      b = 0;         // blue off
+      break;
+    case 1:
+      g = 255 - pos; // green down
+      b = pos;       // blue up
+      r = 0;         // red off
+      break;
+    case 2:
+      b = 255 - pos; // blue down
+      r = pos;       // red up
+      g = 0;         // green off
+      break;
+  }
+  return Color(r, g, b);
+}
+
 void fill_up(LPD8806 &lpd, uint32_t color, uint16_t wait)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
@@ -135,6 +173,23 @@ void cycle_down(LPD8806 &lpd, uint16_t wait)
  * Pattern Functions
  */
 
+void null_init(LPD8806 &)
+{
+}
+
+void rainbow_repeat(LPD8806 &lpd)
+{
+  for (uint16_t i = 0; i < 768; ++i)
+  {
+    for (uint16_t pixel = 0; pixel < lpd.numPixels(); ++pixel)
+    {
+      uint16_t color = (pixel * 768 / lpd.numPixels() + i) % 768;
+      lpd.setPixelColor(pixel, RGB_ColorWheel(color));
+    }
+    lpd.show();
+  }
+}
+
 void fill_init(LPD8806 &lpd)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
@@ -211,6 +266,7 @@ typedef struct
 
 const pattern_t pattern[] =
 {
+  { null_init, rainbow_repeat },
   { fill_init, fade_repeat },
   { fill_init, fill_up_repeat },
   { fill_init, fill_down_repeat },
