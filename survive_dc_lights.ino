@@ -37,7 +37,7 @@ LPD8806 lights(nLEDs, dataPin, clockPin);
  * Utility Functions
  */
 
-void fill(LPD8806 &lpd, uint32_t color, uint16_t wait)
+void fill_up(LPD8806 &lpd, uint32_t color, uint16_t wait)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
@@ -45,6 +45,18 @@ void fill(LPD8806 &lpd, uint32_t color, uint16_t wait)
     lpd.show();
     delay(wait);
   }
+}
+
+void fill_down(LPD8806 &lpd, uint32_t color, uint16_t wait)
+{
+  uint16_t i = lpd.numPixels() - 1;
+  do
+  {
+    lpd.setPixelColor(i, color);
+    lpd.show();
+    delay(wait);
+  }
+  while (i-- != 0);
 }
 
 // Lady Ada's "ordered dither" algorithm
@@ -130,13 +142,23 @@ void fill_init(LPD8806 &lpd)
   }
 }
 
-void fill_repeat(LPD8806 &lpd)
+void fill_up_repeat(LPD8806 &lpd)
 {
   // cycle through colors at roughly 2 Hz
   unsigned ms = 500/lights.numPixels();
   for (size_t i = 0; i < palette_count; ++i)
   {
-    fill(lpd, palette[i], ms);
+    fill_up(lpd, palette[i], ms);
+  }
+}
+
+void fill_down_repeat(LPD8806 &lpd)
+{
+  // cycle through colors at roughly 2 Hz
+  unsigned ms = 500/lights.numPixels();
+  for (size_t i = 0; i < palette_count; ++i)
+  {
+    fill_down(lpd, palette[i], ms);
   }
 }
 
@@ -188,7 +210,8 @@ typedef struct
 
 const pattern_t pattern[] =
 {
-  { fill_init, fill_repeat },
+  { fill_init, fill_up_repeat },
+  { fill_init, fill_down_repeat },
   { fill_init, dither_repeat },
   { palette_init, cycle_up_repeat },
   { palette_init, cycle_down_repeat },
