@@ -101,13 +101,14 @@ void shift_up(LPD8806 &lpd)
 void shift_down(LPD8806 &lpd)
 {
   uint32_t previous = lpd.getPixelColor(0);
-  for (uint16_t i = lpd.numPixels() - 1; i != 0; --i)
+  uint16_t i = lpd.numPixels() - 1;
+  do
   {
     uint32_t current = lpd.getPixelColor(i);
     lpd.setPixelColor(i, previous);
     previous = current;
   }
-  lpd.setPixelColor(0, previous);
+  while (i-- != 0);
 }
 
 void cycle_up(LPD8806 &lpd, uint16_t wait)
