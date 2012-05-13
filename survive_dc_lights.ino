@@ -45,6 +45,34 @@ void fill(LPD8806 &lpd, uint32_t color, uint16_t ms)
   }
 }
 
+// Lady Ada's "ordered dither" algorithm
+void dither(LPD8806 &lpd, uint32_t color, uint16_t wait)
+{
+  // Determine highest bit needed to represent pixel index
+  int hiBit = 0;
+  int n = lpd.numPixels() - 1;
+  for (int bit = 1; bit < 0x8000; bit <<= 1)
+  {
+    if(n & bit) hiBit = bit;
+  }
+  for (int i = 0; i < (hiBit << 1); ++i)
+  {
+    // Reverse the bits in i to create ordered dither:
+    int reverse = 0;
+    for (int bit = 1; bit <= hiBit; bit <<= 1)
+    {
+      reverse <<= 1;
+      if (i & bit)
+      {
+        reverse |= 1;
+      }
+    }
+    lpd.setPixelColor(reverse, color);
+    lpd.show();
+    delay(wait);
+  }
+}
+
 /*
  * Pattern Functions
  */
@@ -67,6 +95,19 @@ void fill_repeat(LPD8806 &lpd)
   }
 }
 
+void dither_repeat(LPD8806 &lpd)
+{
+  // switch colors at roughly 1 Hz
+  unsigned ms = 1000/lights.numPixels()/4;
+  for (size_t i = 0; i < palette_count; ++i)
+  {
+    // fade in (1/4)
+    dither(lpd, palette[i], ms);
+    // hold (3/4)
+    delay(ms*lights.numPixels()*3);
+  }
+}
+
 /*
  * Pattern Definitions
  */
@@ -80,9 +121,10 @@ typedef struct
 const pattern_t pattern[] =
 {
   { fill_init, fill_repeat },
+  { fill_init, dither_repeat },
 };
 const size_t pattern_count = sizeof(pattern)/sizeof(pattern[0]);
-size_t pattern_index = 0;
+size_t pattern_index = 1;
 
 /*
  * Arduino Sketch Functions
