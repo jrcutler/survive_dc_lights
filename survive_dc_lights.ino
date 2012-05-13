@@ -77,7 +77,7 @@ void dither(LPD8806 &lpd, uint32_t color, uint16_t wait)
 void shift_up(LPD8806 &lpd)
 {
   uint32_t previous = lpd.getPixelColor(lpd.numPixels()-1);
-  for (int i = 0; i < lpd.numPixels(); ++i)
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
     uint32_t current = lpd.getPixelColor(i);
     lpd.setPixelColor(i, previous);
@@ -87,7 +87,7 @@ void shift_up(LPD8806 &lpd)
 
 void cycle_up(LPD8806 &lpd, uint16_t wait)
 {
-  for (int i = 0; i < lpd.numPixels(); ++i)
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
     shift_up(lpd);
     lpd.show();
