@@ -3,6 +3,7 @@
 #include <LPD8806.h> // patched for 8-bit color I/O
 #include <SPI.h>
 /* Values */
+#include "CIELAB.h"
 #include "colors.h"
 
 /*
@@ -19,7 +20,7 @@ const int dataPin  = 2;
 const int clockPin = 3;
 #endif
 
-const uint32_t palette[] = { safety_orange, blue };
+uint32_t palette[] = { safety_orange, blue };
 const size_t palette_count = sizeof(palette)/sizeof(palette[0]);
 
 /*
@@ -214,6 +215,12 @@ void setup()
   delay(250);
   EEPROM.write(0, pattern_index + 1);
 #endif
+
+  // color correct palette for human perception
+  for (size_t i = 0; i < palette_count; ++i)
+  {
+    palette[i] = CIE_L(palette[i]);
+  }
 
   // initialize lights
   lights.begin();
