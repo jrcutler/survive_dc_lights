@@ -1,4 +1,5 @@
 /* Libraries */
+#include <EEPROM.h>
 #include <LPD8806.h> // patched for 8-bit color I/O
 #include <SPI.h>
 /* Values */
@@ -124,7 +125,7 @@ const pattern_t pattern[] =
   { fill_init, dither_repeat },
 };
 const size_t pattern_count = sizeof(pattern)/sizeof(pattern[0]);
-size_t pattern_index = 1;
+size_t pattern_index = 0;
 
 /*
  * Arduino Sketch Functions
@@ -132,6 +133,16 @@ size_t pattern_index = 1;
 
 void setup()
 {
+  // read pattern_index from EEPROM
+  pattern_index = EEPROM.read(0);
+  if (pattern_index >= pattern_count)
+  {
+    pattern_index = 0;
+  }
+  // write next pattern_index to EEPROM (after short delay)
+  delay(250);
+  EEPROM.write(0, pattern_index + 1);
+
   // initialize lights
   lights.begin();
   pattern[pattern_index].init(lights);
