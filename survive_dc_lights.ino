@@ -36,13 +36,13 @@ LPD8806 lights(nLEDs, dataPin, clockPin);
  * Utility Functions
  */
 
-void fill(LPD8806 &lpd, uint32_t color, uint16_t ms)
+void fill(LPD8806 &lpd, uint32_t color, uint16_t wait)
 {
   for (uint16_t i = 0; i < lpd.numPixels(); ++i)
   {
     lpd.setPixelColor(i, color);
     lpd.show();
-    delay(ms);
+    delay(wait);
   }
 }
 
