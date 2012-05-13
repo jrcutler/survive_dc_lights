@@ -74,6 +74,27 @@ void dither(LPD8806 &lpd, uint32_t color, uint16_t wait)
   }
 }
 
+void shift_up(LPD8806 &lpd)
+{
+  uint32_t previous = lpd.getPixelColor(lpd.numPixels()-1);
+  for (int i = 0; i < lpd.numPixels(); ++i)
+  {
+    uint32_t current = lpd.getPixelColor(i);
+    lpd.setPixelColor(i, previous);
+    previous = current;
+  }
+}
+
+void cycle_up(LPD8806 &lpd, uint16_t wait)
+{
+  for (int i = 0; i < lpd.numPixels(); ++i)
+  {
+    shift_up(lpd);
+    lpd.show();
+    delay(wait);
+  }
+}
+
 /*
  * Pattern Functions
  */
@@ -109,6 +130,22 @@ void dither_repeat(LPD8806 &lpd)
   }
 }
 
+// spread the palette across all pixels
+void palette_init(LPD8806 &lpd)
+{
+  for (uint16_t i = 0; i < lpd.numPixels(); ++i)
+  {
+    lpd.setPixelColor(i, palette[i*palette_count/lpd.numPixels()]);
+  }
+}
+
+void cycle_up_repeat(LPD8806 &lpd)
+{
+  // cycle through pixels at approximately 1 Hz
+  unsigned ms = 1000/lights.numPixels();
+  cycle_up(lpd, ms);
+}
+
 /*
  * Pattern Definitions
  */
@@ -123,6 +160,7 @@ const pattern_t pattern[] =
 {
   { fill_init, fill_repeat },
   { fill_init, dither_repeat },
+  { palette_init, cycle_up_repeat },
 };
 const size_t pattern_count = sizeof(pattern)/sizeof(pattern[0]);
 size_t pattern_index = 0;
