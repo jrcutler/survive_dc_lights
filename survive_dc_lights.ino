@@ -24,6 +24,11 @@ const int clockPin = 3;
 uint32_t palette[] = { safety_orange, blue };
 const size_t palette_count = sizeof(palette)/sizeof(palette[0]);
 
+#if !defined(NUM_DIGITAL_PINS) && defined(__AVR_ATmega32U4__)
+// Leonardo "pins_arduino.h" does not define NUM_DIGITAL_PINS
+#define NUM_DIGITAL_PINS 30
+#endif
+
 /*
  * Globals
  */
@@ -316,6 +321,12 @@ void setup()
 #ifdef power_usb_disable
   power_usb_disable();
 #endif
+
+  // enable internal pullups on all digital I/O pins
+  for (uint8_t pin = 0; pin < NUM_DIGITAL_PINS; ++pin)
+  {
+    pinMode(pin, INPUT_PULLUP);
+  }
 
   // initialize lights
   lights.begin();
