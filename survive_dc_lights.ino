@@ -317,6 +317,11 @@ void setup()
   power_usb_disable();
 #endif
 
+  // initialize lights
+  lights.begin();
+  // turn off lights during EEPROM read/write
+  lights.show();
+
 #ifndef DEBUG
   // read pattern_index from EEPROM
   pattern_index = EEPROM.read(0);
@@ -337,10 +342,8 @@ void setup()
     palette[i] = CIE_L(palette[i]);
   }
 
-  // initialize lights
-  lights.begin();
-  pattern[pattern_index].init(lights);
   // display initial state
+  pattern[pattern_index].init(lights);
   lights.show();
 }
 
