@@ -2,6 +2,7 @@
 #include <EEPROM.h>
 #include <LPD8806.h> // patched for 8-bit color I/O
 #include <SPI.h>
+#include <avr/power.h>
 /* Values */
 #include "CIELAB.h"
 #include "colors.h"
@@ -300,6 +301,22 @@ size_t pattern_index = 0;
 
 void setup()
 {
+  // turn off unnecessary peripherals
+  power_adc_disable();
+  power_timer1_disable();
+  power_timer2_disable();
+#ifdef power_timer3_disable
+  power_timer3_disable();
+#endif
+  power_twi_disable();
+  power_usart0_disable();
+#ifdef power_usart1_disable
+  power_usart1_disable();
+#endif
+#ifdef power_usb_disable
+  power_usb_disable();
+#endif
+
 #ifndef DEBUG
   // read pattern_index from EEPROM
   pattern_index = EEPROM.read(0);
