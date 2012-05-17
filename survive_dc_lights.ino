@@ -27,6 +27,10 @@ const size_t palette_count = sizeof(palette)/sizeof(palette[0]);
 #if !defined(NUM_DIGITAL_PINS) && defined(__AVR_ATmega32U4__)
 // Leonardo "pins_arduino.h" does not define NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 30
+// Define LED pin (boot LED on Adafruit ATmega32u4 breakout)
+#if !defined(LED_BUILTIN)
+#define LED_BUILTIN 7
+#endif
 #endif
 
 /*
@@ -328,6 +332,12 @@ void setup()
     pinMode(pin, INPUT);
     digitalWrite(pin, 1);
   }
+
+#if defined(LED_BUILTIN)
+    // turn off LED
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, 0);
+#endif
 
   // initialize lights
   lights.begin();
