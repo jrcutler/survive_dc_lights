@@ -325,7 +325,8 @@ void setup()
   // enable internal pullups on all digital I/O pins
   for (uint8_t pin = 0; pin < NUM_DIGITAL_PINS; ++pin)
   {
-    pinMode(pin, INPUT_PULLUP);
+    pinMode(pin, INPUT);
+    digitalWrite(pin, 1);
   }
 
   // initialize lights
