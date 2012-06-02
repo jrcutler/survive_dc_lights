@@ -24,11 +24,13 @@ const int clockPin = 3;
 uint32_t palette[] = { safety_orange, blue };
 const size_t palette_count = sizeof(palette)/sizeof(palette[0]);
 
-#if !defined(NUM_DIGITAL_PINS) && defined(__AVR_ATmega32U4__)
+#if defined(__AVR_ATmega32U4__)
+#if !defined(NUM_DIGITAL_PINS)
 // Leonardo "pins_arduino.h" does not define NUM_DIGITAL_PINS
 #define NUM_DIGITAL_PINS 30
-// Define LED pin (boot LED on Adafruit ATmega32u4 breakout)
+#endif
 #if !defined(LED_BUILTIN)
+// Define LED pin (boot LED on Adafruit ATmega32u4 breakout)
 #define LED_BUILTIN 7
 #endif
 #endif
